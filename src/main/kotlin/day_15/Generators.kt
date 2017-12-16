@@ -22,33 +22,24 @@ class Generators {
     fun partTwo(generatorAStartValue: Long, generatorBStartValue: Long): Int {
         var generatorAValue = generatorAStartValue
         var generatorBValue = generatorBStartValue
-        var count = 0
-        var acceptedValuesByJudge = 0
         val generatedValuesByA = mutableListOf<Long>()
         val generatedValuesByB = mutableListOf<Long>()
-var i = 0
-        while (acceptedValuesByJudge <= 5_000_000) {
-            generatorAValue = (generatorAValue * 16807) % 2147483647
-            generatorBValue = (generatorBValue * 48271) % 2147483647
 
+        while (generatedValuesByA.size < 5_000_000) {
+            generatorAValue = (generatorAValue * 16807) % 2147483647
             if (generatorAValue % 4 == 0L) {
                 generatedValuesByA.add(generatorAValue)
             }
+        }
 
+        while (generatedValuesByB.size < 5_000_000) {
+            generatorBValue = (generatorBValue * 48271) % 2147483647
             if (generatorBValue % 8 == 0L) {
                 generatedValuesByB.add(generatorBValue)
             }
-//
-            if (generatedValuesByA.isNotEmpty() && generatedValuesByB.isNotEmpty()) {
-                acceptedValuesByJudge++
-                if (areLast16BitsEqual(generatedValuesByA.removeAt(0), generatedValuesByB.removeAt(0))) {
-                    count++
-                }
-            }
-             i++
         }
 
-        return count
+        return (0 until 5_000_000).count { areLast16BitsEqual(generatedValuesByA[it], generatedValuesByB[it]) }
     }
 
     private fun areLast16BitsEqual(a: Long, b: Long) = a.toShort() == b.toShort()
@@ -56,4 +47,5 @@ var i = 0
 
 fun main(args: Array<String>) {
     println(Generators().partOne(699, 124))
+    println(Generators().partTwo(699, 124))
 }
