@@ -6,8 +6,10 @@ class FractalArt {
 
     private val ON = '#'
 
-    fun partOne(rules: Map<Array<CharArray>, Array<CharArray>>, input: Array<CharArray>, iterations: Int): Int {
+    fun partOne(inputRules: Map<Array<CharArray>, Array<CharArray>>, input: Array<CharArray>, iterations: Int): Int {
         var image = input
+        val rules = inputRules.toMutableMap()
+        inputRules.forEach { rule -> FractalArt().generateAllPossibleRules(rule.key).forEach { rules.put(it, rule.value) } }
 
         for (i in 0 until iterations) {
             if (image.size % 2 == 0) {
@@ -46,17 +48,15 @@ class FractalArt {
     }
 
     private fun applyRule(images: List<Array<CharArray>>, rules: Map<Array<CharArray>, Array<CharArray>>): List<Array<CharArray>> {
-        return images.map { image ->
+        return images.map { image -> rules.get(image)
             for (rule in rules) {
-                if (checkRule(rule.key, image)) {
+                if (rule.key.contentDeepEquals(image)) {
                     return@map rule.value
                 }
             }
             return@map image
         }
     }
-
-    private fun countONPixels(image: Array<CharArray>) = image.contentDeepToString().count { it == ON }
 
     private fun combineImages(images: List<Array<CharArray>>, imageSize: Int, divideFactor: Int): Array<CharArray> {
         val newImage = mutableListOf<MutableList<Char>>()
@@ -79,14 +79,6 @@ class FractalArt {
     private fun checkRule(rule: Array<CharArray>, input: Array<CharArray>): Boolean {
         val transformations = ImageTransformations()
 
-//        if (rule.size != input.size) {
-//            return false
-//        }
-//
-//        if (countONPixels(rule) != countONPixels(input)) {
-//            return false
-//        }
-
         return rule.contentDeepEquals(input) ||
                 rule.contentDeepEquals(transformations.flipVertically(input)) ||
                 rule.contentDeepEquals(transformations.flipHorizontally(input)) ||
@@ -94,6 +86,21 @@ class FractalArt {
                 rule.contentDeepEquals(transformations.flipBySecondDiagonal(input)) ||
                 rule.contentDeepEquals(transformations.rotate(input)) ||
                 rule.contentDeepEquals(transformations.rotateClockWise(input))
+    }
+
+    fun generateAllPossibleRules(rule: Array<CharArray>): List<Array<CharArray>> {
+        val result = mutableListOf<Array<CharArray>>()
+        val transformations = ImageTransformations()
+
+        result.add(transformations.flipByFirstDiagonal(rule))
+        result.add(transformations.flipBySecondDiagonal(rule))
+        result.add(transformations.flipHorizontally(rule))
+        result.add(transformations.flipVertically(rule))
+        result.add(transformations.flipVertically(rule))
+        result.add(transformations.rotate(rule))
+        result.add(transformations.rotateClockWise(rule))
+
+        return result
     }
 
     fun readFile(path: String): Map<Array<CharArray>, Array<CharArray>> {

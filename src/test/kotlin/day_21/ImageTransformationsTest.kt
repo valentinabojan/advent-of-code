@@ -1,8 +1,6 @@
 package day_21
 
 import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class ImageTransformationsTest {
@@ -27,7 +25,6 @@ class ImageTransformationsTest {
     @Test
     fun `given input image when flipByFirstDiagonal is applied then correct image is returned`() {
         val expectedImage = arrayOf(charArrayOf('.', '.', '#'), charArrayOf('#', '.', '#'), charArrayOf('.', '#', '#'))
-
 
         assertTrue { expectedImage.contentDeepEquals(transformations.flipByFirstDiagonal(image)) }
     }
