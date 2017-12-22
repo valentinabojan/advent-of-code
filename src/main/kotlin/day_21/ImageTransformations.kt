@@ -2,24 +2,24 @@ package day_21
 
 class ImageTransformations {
 
-    fun flipVertically(pattern: List<List<String>>): List<List<String>> {
-        return pattern.reversed()
+    fun flipVertically(pattern: Array<CharArray>): Array<CharArray> {
+        return pattern.reversedArray()
     }
 
-    fun flipHorizontally(pattern: List<List<String>>): List<List<String>> {
-        return pattern.map { it.reversed() }
+    fun flipHorizontally(pattern: Array<CharArray>): Array<CharArray> {
+        return pattern.map { it.reversedArray() }.toTypedArray()
     }
 
-    fun flipByFirstDiagonal(pattern: List<List<String>>): List<List<String>> {
+    fun flipByFirstDiagonal(pattern: Array<CharArray>): Array<CharArray> {
         return rotate(flipHorizontally(pattern))
     }
 
-    fun flipBySecondDiagonal(pattern: List<List<String>>): List<List<String>> {
+    fun flipBySecondDiagonal(pattern: Array<CharArray>): Array<CharArray> {
         return rotate(flipVertically(pattern))
     }
 
-    fun rotate(pattern: List<List<String>>): List<List<String>> {
-        val result = pattern.toMutableList().map { it.toMutableList() }
+    fun rotate(pattern: Array<CharArray>): Array<CharArray> {
+        val result = Array(pattern.size, {CharArray(pattern.size)})
 
         for (i in 0 until pattern.size) {
             for (j in 0 until pattern.size) {
@@ -30,8 +30,8 @@ class ImageTransformations {
         return result
     }
 
-    fun rotateClockWise(pattern: List<List<String>>): List<List<String>> {
-        val result = pattern.toMutableList().map { it.toMutableList() }
+    fun rotateClockWise(pattern: Array<CharArray>): Array<CharArray> {
+        val result = Array(pattern.size, {CharArray(pattern.size)})
 
         for (i in 0 until pattern.size) {
             for (j in 0 until pattern.size) {

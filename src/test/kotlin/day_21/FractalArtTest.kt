@@ -7,7 +7,7 @@ class FractalArtTest {
 
     @Test
     fun `given input image and rules when partOne is applied with 2 iterations then correct number of # pixels is returned`() {
-        val input = listOf(listOf(".", "#", "."), listOf(".", ".", "#"), listOf("#", "#", "#"))
+        val input = arrayOf(charArrayOf('.', '#', '.'), charArrayOf('.', '.', '#'), charArrayOf('#', '#', '#'))
         val rules = FractalArt().readFile("src/test/resources/day_21/rules.txt")
         val iterations = 2
 

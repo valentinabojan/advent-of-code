@@ -4,9 +4,9 @@ import java.io.File
 
 class FractalArt {
 
-    private val ON = "#"
+    private val ON = '#'
 
-    fun partOne(rules: Map<List<List<String>>, List<List<String>>>, input: List<List<String>>, iterations: Int): Int {
+    fun partOne(rules: Map<Array<CharArray>, Array<CharArray>>, input: Array<CharArray>, iterations: Int): Int {
         var image = input
 
         for (i in 0 until iterations) {
@@ -22,15 +22,15 @@ class FractalArt {
             }
         }
 
-        return image.flatMap { it }.count { it == ON }
+        return image.sumBy { it.count { it == ON } }
     }
 
-    private fun splitImage(image: List<List<String>>, dividerFactor: Int): List<List<List<String>>> {
-        val smallImages = mutableListOf<List<List<String>>>()
+    private fun splitImage(image: Array<CharArray>, dividerFactor: Int): List<Array<CharArray>> {
+        val smallImages = mutableListOf<Array<CharArray>>()
 
         for (i in 0 until image.size step dividerFactor) {
             for (j in 0 until image.size step dividerFactor) {
-                val smallImage = List(dividerFactor) { arrayOfNulls<String>(dividerFactor) }
+                val smallImage = Array(dividerFactor, { CharArray(dividerFactor) })
 
                 for (r in 0 until dividerFactor) {
                     for (c in 0 until dividerFactor) {
@@ -38,14 +38,14 @@ class FractalArt {
                     }
                 }
 
-                smallImages.add(smallImage.map { it.toList().requireNoNulls() })
+                smallImages.add(smallImage)
             }
         }
 
         return smallImages
     }
 
-    private fun applyRule(images: List<List<List<String>>>, rules: Map<List<List<String>>, List<List<String>>>): List<List<List<String>>> {
+    private fun applyRule(images: List<Array<CharArray>>, rules: Map<Array<CharArray>, Array<CharArray>>): List<Array<CharArray>> {
         return images.map { image ->
             for (rule in rules) {
                 if (checkRule(rule.key, image)) {
@@ -56,8 +56,10 @@ class FractalArt {
         }
     }
 
-    private fun combineImages(images: List<List<List<String>>>, imageSize: Int, divideFactor: Int): List<List<String>> {
-        val newImage = mutableListOf<MutableList<String>>()
+    private fun countONPixels(image: Array<CharArray>) = image.contentDeepToString().count { it == ON }
+
+    private fun combineImages(images: List<Array<CharArray>>, imageSize: Int, divideFactor: Int): Array<CharArray> {
+        val newImage = mutableListOf<MutableList<Char>>()
 
         for (i in 0 until images.size) {
             val row = i / (imageSize / divideFactor)
@@ -66,34 +68,41 @@ class FractalArt {
                 images[i].forEach{ newImage.add(it.toMutableList())}
             } else {
                 for (j in 0 until divideFactor + 1) {
-                    newImage[(divideFactor + 1) * row + j].addAll(images[i][j])
+                    newImage[(divideFactor + 1) * row + j].addAll(images[i][j].asList())
                 }
             }
         }
 
-        return newImage
+        return newImage.map { it.toCharArray() }.toTypedArray()
     }
 
-    private fun checkRule(rule: List<List<String>>, input: List<List<String>>): Boolean {
+    private fun checkRule(rule: Array<CharArray>, input: Array<CharArray>): Boolean {
         val transformations = ImageTransformations()
 
-        return rule == input ||
-                rule == transformations.flipVertically(input) ||
-                rule == transformations.flipHorizontally(input) ||
-                rule == transformations.flipByFirstDiagonal(input) ||
-                rule == transformations.flipBySecondDiagonal(input) ||
-                rule == transformations.rotate(input) ||
-                rule == transformations.rotateClockWise(input)
+//        if (rule.size != input.size) {
+//            return false
+//        }
+//
+//        if (countONPixels(rule) != countONPixels(input)) {
+//            return false
+//        }
+
+        return rule.contentDeepEquals(input) ||
+                rule.contentDeepEquals(transformations.flipVertically(input)) ||
+                rule.contentDeepEquals(transformations.flipHorizontally(input)) ||
+                rule.contentDeepEquals(transformations.flipByFirstDiagonal(input)) ||
+                rule.contentDeepEquals(transformations.flipBySecondDiagonal(input)) ||
+                rule.contentDeepEquals(transformations.rotate(input)) ||
+                rule.contentDeepEquals(transformations.rotateClockWise(input))
     }
 
-    fun readFile(path: String): Map<List<List<String>>, List<List<String>>> {
-        val rules = mutableMapOf<List<List<String>>, List<List<String>>>()
+    fun readFile(path: String): Map<Array<CharArray>, Array<CharArray>> {
+        val rules = mutableMapOf<Array<CharArray>, Array<CharArray>>()
         File(path).forEachLine {
             val elements = it.split(" => ")
-            val pattern = elements[0].split("/").map { it.toCharArray().map { it + "" }.toList() }
-            val result = elements[1].split("/").map { it.toCharArray().map { it + "" }.toList() }
+            val pattern = elements[0].split("/").map { it.toCharArray() }.toTypedArray()
+            val result = elements[1].split("/").map { it.toCharArray() }.toTypedArray()
             rules.put(pattern, result)
-
         }
         return rules
     }
@@ -101,7 +110,7 @@ class FractalArt {
 
 fun main(args: Array<String>) {
     val rules = FractalArt().readFile("src/main/resources/day_21/rules.txt")
-    val input = listOf(listOf(".", "#", "."), listOf(".", ".", "#"), listOf("#", "#", "#"))
+    val input = arrayOf(charArrayOf('.', '#', '.'), charArrayOf('.', '.', '#'), charArrayOf('#', '#', '#'))
 
     println(FractalArt().partOne(rules, input, 5))          // 152
 
