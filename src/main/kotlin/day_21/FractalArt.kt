@@ -38,7 +38,7 @@ class FractalArt {
                     }
                 }
 
-                smallImages.add(smallImage.map { it.toList().requireNoNulls().toList() })
+                smallImages.add(smallImage.map { it.toList().requireNoNulls() })
             }
         }
 
@@ -77,23 +77,13 @@ class FractalArt {
     private fun checkRule(rule: List<List<String>>, input: List<List<String>>): Boolean {
         val transformations = ImageTransformations()
 
-        val flipCheck =
+        return rule == input ||
                 rule == transformations.flipVertically(input) ||
                 rule == transformations.flipHorizontally(input) ||
                 rule == transformations.flipByFirstDiagonal(input) ||
-                rule == transformations.flipBySecondDiagonal(input)
-
-        var rotateCheck = false
-        var rotateInput = input
-        for (i in 0 until 4) {
-            rotateInput = transformations.rotate(rotateInput)
-            if (rule == rotateInput) {
-                rotateCheck = true
-                break
-            }
-        }
-
-        return flipCheck || rotateCheck
+                rule == transformations.flipBySecondDiagonal(input) ||
+                rule == transformations.rotate(input) ||
+                rule == transformations.rotateClockWise(input)
     }
 
     fun readFile(path: String): Map<List<List<String>>, List<List<String>>> {
@@ -114,5 +104,9 @@ fun main(args: Array<String>) {
     val input = listOf(listOf(".", "#", "."), listOf(".", ".", "#"), listOf("#", "#", "#"))
 
     println(FractalArt().partOne(rules, input, 5))          // 152
+
+    val s = System.currentTimeMillis()
     println(FractalArt().partOne(rules, input, 18))         // 1956174
+    val e = System.currentTimeMillis()
+    println(e - s)
 }

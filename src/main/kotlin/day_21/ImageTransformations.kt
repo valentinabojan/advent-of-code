@@ -19,15 +19,26 @@ class ImageTransformations {
     }
 
     fun rotate(pattern: List<List<String>>): List<List<String>> {
-        val result = List(pattern.size) { arrayOfNulls<String>(pattern.size) }
+        val result = pattern.toMutableList().map { it.toMutableList() }
 
-        for (r in 0 until pattern.size) {
-            val column = pattern[r].reversed()
-            for (c in 0 until pattern.size) {
-                result[c][r] = column[c]
+        for (i in 0 until pattern.size) {
+            for (j in 0 until pattern.size) {
+                result[i][j] = pattern[j][pattern.size - 1 - i]
             }
         }
 
-        return result.map { it.toList().requireNoNulls() }
+        return result
+    }
+
+    fun rotateClockWise(pattern: List<List<String>>): List<List<String>> {
+        val result = pattern.toMutableList().map { it.toMutableList() }
+
+        for (i in 0 until pattern.size) {
+            for (j in 0 until pattern.size) {
+                result[i][j] = pattern[pattern.size - 1 - j][i]
+            }
+        }
+
+        return result
     }
 }

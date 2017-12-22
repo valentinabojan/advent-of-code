@@ -62,4 +62,12 @@ class ImageTransformationsTest {
     fun `given input image when rotate 360 counterclockwise is applied then initial image is returned`() {
         assertEquals(image, transformations.rotate(transformations.rotate(transformations.rotate(transformations.rotate(image)))))
     }
+
+    @Test
+    fun `given input image when rotate 90 rotateClockWise is applied then correct image is returned`() {
+        val expectedImage = listOf(listOf("#", ".", "."), listOf("#", ".", "#"), listOf("#", "#", "."))
+
+        assertEquals(expectedImage, transformations.rotateClockWise(image))
+    }
+
 }
